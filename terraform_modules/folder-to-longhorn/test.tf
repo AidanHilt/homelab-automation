@@ -1,0 +1,66 @@
+provider "kubernetes" {
+    config_path = "~/.kube/config"
+}
+
+resource "kubernetes_persistent_volume_claim" "vol" {
+    metadata {
+        name = "pvc-${var.volume_name}"
+    }
+
+    spec {
+        access_modes = ["ReadWriteOnce"]
+        resources {
+            requests = {
+                storage = "5Gi"
+            }
+        }
+
+        storage_class_name = "longhorn"
+    }
+
+}
+
+resource "kubernetes_pod" "longhorn-transfer-pod" {
+    metadata {
+        name = "longhorn-transfer-pod1"
+    }
+
+    spec {
+        container {
+            name = "migrator"
+            image = "ubuntu:xenial"
+            tty = true
+
+            # command = ["/bin/sh"]
+            # args = [ "-c", "cp -r -v /mnt/old/* /mnt/new" ]
+
+            command = ["tail"]
+            args = [ "-f", "/dev/null" ]
+
+            volume_mount {
+                mount_path = "/mnt/old"
+                name = "old-volume"
+                read_only = true
+            }
+
+            volume_mount {
+                mount_path = "/mnt/new"
+                name = "new-volume"
+            }
+        } 
+
+        volume {
+            name = "old-volume"
+            host_path {
+                path = var.path
+            }
+        }
+
+        volume {
+            name = "new-volume"
+            persistent_volume_claim {
+                claim_name = "pvc-${var.volume_name}"
+            }
+        }
+    }
+}

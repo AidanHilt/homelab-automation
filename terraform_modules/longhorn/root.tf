@@ -19,9 +19,6 @@ resource "helm_release" "longhorn"{
     ]
 
     namespace = "longhorn-system"
-    create_namespace = true
-
-    cleanup_on_fail = true
 }
 
 resource "kubernetes_secret" "longhorn_auth" {

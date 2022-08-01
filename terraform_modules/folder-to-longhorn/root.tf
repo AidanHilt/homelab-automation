@@ -2,9 +2,16 @@ provider "kubernetes" {
     config_path = "~/.kube/config"
 }
 
+resource "kubernetes_namespace" "namespace" {
+    metadata {
+        name = var.volume_name
+    }
+}
+
 resource "kubernetes_persistent_volume_claim" "vol" {
     metadata {
         name = "pvc-${var.volume_name}"
+        namespace = var.volume_name
     }
 
     spec {
@@ -22,7 +29,8 @@ resource "kubernetes_persistent_volume_claim" "vol" {
 
 resource "kubernetes_pod" "longhorn-transfer-pod" {
     metadata {
-        name = "longhorn-transfer-pod1"
+        name = "longhorn-transfer-pod"
+        namespace = var.volume_name
     }
 
     spec {

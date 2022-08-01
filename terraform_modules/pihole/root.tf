@@ -29,19 +29,6 @@ resource "kubernetes_persistent_volume_claim" "dnsmasq" {
     }
 }
 
-# resource "helm_release" "pihole" {
-#     name = "pihole"
-#     repository = "https://mojo2600.github.io/pihole-kubernetes/"
-#     chart = "pihole"
-    
-#     namespace = "pihole"
-
-#     values = [
-#         "${file("values.yaml")}"
-#     ]
-
-# }
-
 resource "kubernetes_pod" "pihole_pod"{
     metadata {
         name = "pihole"
@@ -55,6 +42,10 @@ resource "kubernetes_pod" "pihole_pod"{
         dns_policy = "None"
         dns_config {
             nameservers = ["1.1.1.1"]
+        }
+
+        node_selector = {
+            "kubernetes.io/hostname" = "gaming-pc-node"
         }
 
         container {
@@ -76,17 +67,14 @@ resource "kubernetes_pod" "pihole_pod"{
 
             port {
                 container_port = "53"
-                protocol = "TCP"
+                protocol = "UDP"
+                host_port = "53"
             }
 
             port {
                 container_port = "53"
-                protocol = "UDP"
-            }
-
-            port {
-                container_port = "67"
-                protocol = "UDP"
+                protocol = "TCP"
+                host_port = "53"
             }
 
 
@@ -136,6 +124,27 @@ resource "kubernetes_service_v1" "pihole-service" {
         }
     }
 }
+
+# resource "kubernetes_service_v1" "pihole-dns-service" {
+#     metadata {
+#         name = "pihole-dns"
+#         namespace = "pihole"
+#     }
+
+#     spec {
+#         selector = {
+#             app = "pihole"
+#         }
+
+#         port {
+#             port = 53
+#             target_port = 53
+#             name = "dns"
+#         }
+
+#         type = "LoadBalancer"
+#     }
+# }
 
 resource "kubernetes_ingress_v1" "pihole_ingress" {
   metadata {

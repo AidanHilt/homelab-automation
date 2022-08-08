@@ -1,0 +1,23 @@
+persistence:
+  config:
+    enabled: true
+    type: pvc
+
+    mountPath: /config
+    readOnly: false
+
+    existingClaim: pvc-prowlarr
+
+    accessMode: ReadWriteOnce
+
+    retain: true
+
+service:
+  main:
+    ports:
+      http:
+        port: 80
+        targetPort: 9696
+
+env:
+  TZ: America/New York

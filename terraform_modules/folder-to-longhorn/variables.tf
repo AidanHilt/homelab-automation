@@ -16,5 +16,10 @@ variable path{
   description = "The path of the folder to be converted into a Longhorn volume"
 }
 
+variable namespace{
+  type        = string
+  default     = ""
+  description = "The name of the namespace to bring up this new PVC in."
+}
 
 

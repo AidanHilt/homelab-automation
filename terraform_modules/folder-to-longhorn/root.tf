@@ -4,14 +4,14 @@ provider "kubernetes" {
 
 resource "kubernetes_namespace" "namespace" {
     metadata {
-        name = var.volume_name
+        name = var.namespace
     }
 }
 
 resource "kubernetes_persistent_volume_claim" "vol" {
     metadata {
         name = "pvc-${var.volume_name}"
-        namespace = var.volume_name
+        namespace = var.namespace
     }
 
     spec {
@@ -30,7 +30,7 @@ resource "kubernetes_persistent_volume_claim" "vol" {
 resource "kubernetes_pod" "longhorn-transfer-pod" {
     metadata {
         name = "longhorn-transfer-pod"
-        namespace = var.volume_name
+        namespace = var.namespace
     }
 
     spec {

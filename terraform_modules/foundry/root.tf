@@ -26,72 +26,89 @@ resource "kubernetes_persistent_volume_claim_v1" "containerCache" {
     }
 }
 
-resource "kubernetes_pod" "foundry_pod" {
+resource "kubernetes_deployment" "foundry_service" {
     metadata {
-    name = "${var.environment-name}-pod"
-    namespace = "foundry"
-    labels = {
-        app = "${var.environment-name}-app"
-    }
+        name = "${var.environment-name}-deployment"
+        namespace = "foundry"
     }
 
     spec {
-        container {
-            name = "foundry"
-            image = "felddy/foundryvtt:${var.foundry-version}"
-            
-            env {
-                name = "FOUNDRY_USERNAME"
-                value = "${var.foundry-username}" 
+        replicas = 1
+
+        selector {
+            match_labels = {
+                app = "${var.environment-name}-app"
+            }
+        }
+
+    template {
+        metadata {
+            name = "${var.environment-name}-pod"
+            namespace = "foundry"
+            labels = {
+                app = "${var.environment-name}-app"
+            }
+        }
+
+        spec {
+            container {
+                name = "foundry"
+                image = "felddy/foundryvtt:${var.foundry-version}"
+                
+                env {
+                    name = "FOUNDRY_USERNAME"
+                    value = "${var.foundry-username}" 
+                }
+
+                env {
+                    name = "FOUNDRY_PASSWORD"
+                    value = "${var.foundry-password}" 
+                }
+
+                env {
+                    name = "CONTAINER_CACHE"
+                    value = "/containerCache" 
+                }
+
+                env {
+                    name = "FOUNDRY_MINIFY_STATIC_FILES"
+                    value = true 
+                }
+
+                env {
+                    name = "FOUNDRY_VESRION"
+                    value = "${var.foundry-version}" 
+                }
+
+                env {
+                    name = "FOUNDRY_ROUTE_PREFIX"
+                    value = "${var.environment-name}"
+                }
+
+                volume_mount {
+                    name = "data"
+                    mount_path = "/data"
+                }
+
+                volume_mount {
+                    name = "container-cache"
+                    mount_path = "/containerCache"
+                }
             }
 
-            env {
-                name = "FOUNDRY_PASSWORD"
-                value = "${var.foundry-password}" 
-            }
-
-            env {
-                name = "CONTAINER_CACHE"
-                value = "/containerCache" 
-            }
-
-            env {
-                name = "FOUNDRY_MINIFY_STATIC_FILES"
-                value = true 
-            }
-
-            env {
-                name = "FOUNDRY_VESRION"
-                value = "${var.foundry-version}" 
-            }
-
-            env {
-                name = "FOUNDRY_ROUTE_PREFIX"
-                value = "${var.environment-name}"
-            }
-
-            volume_mount {
+            volume {
                 name = "data"
-                mount_path = "/data"
+                persistent_volume_claim {
+                    claim_name = "pvc-foundry"
+                }
             }
 
-            volume_mount {
+            volume {
                 name = "container-cache"
-                mount_path = "/containerCache"
-            }
-        }
-
-        volume {
-            name = "data"
-            persistent_volume_claim {
-                claim_name = "pvc-foundry"
-            }
-        }
-
-        volume {
-            name = "container-cache"
-            persistent_volume_claim {
-                claim_name = "pvc-container-cache"
+                persistent_volume_claim {
+                    claim_name = "pvc-container-cache"
+                    }
+                }
             }
         }
     }

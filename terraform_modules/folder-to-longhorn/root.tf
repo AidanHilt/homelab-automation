@@ -24,7 +24,6 @@ resource "kubernetes_persistent_volume_claim" "vol" {
 
         storage_class_name = "longhorn"
     }
-
 }
 
 resource "kubernetes_pod" "longhorn-transfer-pod" {

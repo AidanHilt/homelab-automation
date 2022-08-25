@@ -62,7 +62,6 @@ resource "kubernetes_persistent_volume_claim" "data-pvc" {
 
 }
 
-
 resource "helm_release" "prowlarr"{
     name = "prowlarr"
     repository = "https://k8s-at-home.com/charts/"

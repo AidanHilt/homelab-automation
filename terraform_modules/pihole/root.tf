@@ -63,6 +63,7 @@ resource "kubernetes_deployment" "pihole_deployment"{
                 container {
                     name = "pihole"
                     image = "pihole/pihole"
+                    image_pull_policy = "IfNotPresent"
                     
                     env {
                         name = "TZ"  

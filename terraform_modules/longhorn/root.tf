@@ -49,10 +49,6 @@ resource "kubernetes_ingress_v1" "longhorn_ingress" {
       "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
       "nginx.ingress.kubernetes.io/proxy-body-size"= "10000m"
       "nginx.ingress.kubernetes.io/rewrite-target" = "/$2"
-      # "nginx.ingress.kubernetes.io/configuration-snippet" = "rewrite ^([^.?]*[^/])$ $1/ redirect;"
-      # "nginx.ingress.kubernetes.io/auth-type" = "basic"
-      # "nginx.ingress.kubernetes.io/auth-secret" = "basic-auth"
-      # "nginx.ingress.kubernetes.io/auth-realm" = "Authentication Required "
     }
   }
 

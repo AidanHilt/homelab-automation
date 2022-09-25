@@ -9,9 +9,9 @@ provider "helm" {
     debug = true
 }
 
-resource "kubernetes_persistent_volume_claim" "calibre-web-data" {
+resource "kubernetes_persistent_volume_claim" "calibre-web-library" {
     metadata {
-        name = "pvc-calibre-data"
+        name = "pvc-calibre"
         namespace = var.namespace
     }
 
@@ -27,12 +27,98 @@ resource "kubernetes_persistent_volume_claim" "calibre-web-data" {
     }
 }
 
+resource "kubernetes_persistent_volume" "library-volume" {
+    metadata {
+        name = "library-volume"
+    }
+
+    spec {
+        capacity = {
+            storage = "100Gi"
+        }
+
+        storage_class_name = "manual"
+
+        access_modes = ["ReadWriteMany"]
+        persistent_volume_source {
+            host_path {
+                path = "/storagePool/Books"
+            }
+        }
+    }
+}
+
+resource "kubernetes_persistent_volume_claim" "library-pvc" {
+    metadata {
+        name = "library-pvc"
+        namespace = var.namespace
+    }
+
+    spec {
+        access_modes = ["ReadWriteMany"]
+
+        resources {
+            requests = {
+                storage = "100Gi"
+            }
+        }
+
+        storage_class_name = "manual"
+
+        volume_name = "library-volume"
+    
+    }
+}
+
+
+resource "kubernetes_ingress_v1" "calibre-web_ingress" {
+  metadata {
+    namespace = var.namespace
+    name = "calibre-web-ingress"
+    annotations = {
+        "nginx.ingress.kubernetes.io/configuration-snippet" = <<EOT
+        rewrite ^/calibre-web(/.*)$ $1 break;
+        proxy_bind              $server_addr;
+        proxy_set_header        Host            $http_host;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header        X-Scheme        $scheme;
+        proxy_set_header        X-Script-Name   /calibre-web;  # IMPORTANT: path has NO trailing slash 
+        EOT
+    }
+  }
+
+  spec {            
+    ingress_class_name = "nginx"
+
+    rule{
+        http{
+            path{
+                path = "/calibre-web(/|$)(.*)"
+                path_type = "Prefix"
+                
+                backend {
+                    service{
+                        name = "calibre-web"
+                        port{
+                            number = 80
+                        }
+                    }
+                }
+            }
+        }
+    }
+  }
+}
+
 
 resource "helm_release" "calibre-web" {
-    name = "prometheus-operator"
-    repository = "https://prometheus-community.github.io/helm-charts"
-    chart = "kube-prometheus-stack"   
+    name = "calibre-web"
+    repository = "https://k8s-at-home.com/charts/"
+    chart = "calibre-web"   
 
+    values = [
+        "${file("calibre-values.yaml")}"
+    ]   
 
     namespace = var.namespace
 }

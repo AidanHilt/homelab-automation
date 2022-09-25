@@ -278,7 +278,7 @@ resource "kubernetes_ingress_v1"  "qbittorrent_ingress" {
         "nginx.ingress.kubernetes.io/rewrite-target" = "/$2"
         #"nginx.ingress.kubernetes.io/configuration-snippet" = "rewrite ^([^.]*[^/])$ $1/ permanent;"
         
-        "nginx.ingress.kubernetes.io/proxy-http-version" =  "1.1"
+        "nginx.ingress.kubernetes.io/proxy-http-version" = "1.1"
         "nginx.ingress.kubernetes.io/http2-push-preload" = "on"
 
         "nginx.ingress.kubernetes.io/auth-proxy-set-header" = "Host $host"

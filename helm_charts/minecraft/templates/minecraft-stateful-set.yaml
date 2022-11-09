@@ -31,7 +31,7 @@ spec:
           value: {{ .Values.minecraftVersion }}
 
         - name: ENABLE_RCON
-          value: "true"
+          value: "false"
         
         - name: RCON_PASSWORD
           value: {{ .Values.rconPassword }}
@@ -39,15 +39,25 @@ spec:
         - name: SNOOPER_ENABLED
           value:  "false"
 
-        - name: MEMORY
-          value: 8G
+        - name: MAX_MEMORY
+          value: 4G
+
+        - name: INIT_MEMORY
+          value: 1G
         
         ports:
         - containerPort: 25565
+        - containerPort: 25575
         
         volumeMounts:
         - mountPath: /data
           name: data
+
+        resources:
+          requests:
+            memory: "2G"
+          limits:
+            memory: "6G"
       {{ if .Values.backups.enabled }}
       - name: backup
         image: itzg/mc-backup
@@ -67,11 +77,11 @@ spec:
         volumeMounts:
         - mountPath: /data
           name: data
-        {{ if .Values.backups.enabled }}
+        {{- if .Values.backups.enabled }}
         - mountPath: /backups
           name: backups
-        {{ end }}
-      {{ end }}
+        {{- end }}
+      {{- end }}
       volumes:
       - name: data
         persistentVolumeClaim:

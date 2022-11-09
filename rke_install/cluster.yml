@@ -23,6 +23,7 @@ nodes:
   role:
   - controlplane
   - worker
+  - etcd
   hostname_override: gaming-pc-node
   user: aidan
   docker_socket: /var/run/docker.sock

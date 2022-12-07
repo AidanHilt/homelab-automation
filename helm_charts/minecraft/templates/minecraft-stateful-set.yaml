@@ -31,7 +31,7 @@ spec:
           value: {{ .Values.minecraftVersion }}
 
         - name: ENABLE_RCON
-          value: "false"
+          value: "true"
         
         - name: RCON_PASSWORD
           value: {{ .Values.rconPassword }}
@@ -40,7 +40,7 @@ spec:
           value:  "false"
 
         - name: MAX_MEMORY
-          value: 4G
+          value: 8G
 
         - name: INIT_MEMORY
           value: 1G
@@ -55,9 +55,9 @@ spec:
 
         resources:
           requests:
-            memory: "2G"
+            memory: "1G"
           limits:
-            memory: "6G"
+            memory: "8G"
       {{ if .Values.backups.enabled }}
       - name: backup
         image: itzg/mc-backup
@@ -65,14 +65,17 @@ spec:
         securityContext:
           runAsUser: 1000
         env:
-        - name: BACKUP_INTERVAL
-          value: "60"
-          
         - name: INITIAL_DELAY
-          value: "10"
+          value: "120"
 
         - name: RCON_PASSWORD
           value: {{ .Values.rconPassword }}
+
+        - name: BACKUP_INTERVAL
+          value: "2h"
+
+        - name: PRUNE_BACKUPS_DAYS
+          value: "1"
 
         volumeMounts:
         - mountPath: /data

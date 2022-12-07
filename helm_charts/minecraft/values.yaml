@@ -2,7 +2,7 @@
 minecraftPath: /storagePool/Samba/MinecraftServers/1.12.2\ TSR\ Server/
 
 backups:
-  enabled: false
+  enabled: true
   backupPath: /storagePool/Samba/MinecraftServers/Backups/TSR
 
 #This is used for the mc-router, which allows us to easily host multiple servers. If default is set to false, a hostname must be provided
@@ -18,9 +18,14 @@ nodeSelector:
 minecraftVersion: 1.12.2
 
 #The password used to authenticate with rcon
-rconPassword: iml7MWRkhLwK5ANva569
+rconPassword: 8WuqeZKEdNQgmXZnDHDVWF5S
 
 #The password used to sign in to the default account for the rcon web interface
-rconWebPassword: DThO2nhefqzZ2ive8j5m
+rconWebPassword: NSxkLWwesJBJpacNrKKvumCE
+
+
+    
+    
+
 
 

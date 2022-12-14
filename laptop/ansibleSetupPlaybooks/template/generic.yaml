@@ -1,0 +1,27 @@
+#INSERT GENERAL DESCRIPTION OF THE MODULE HERE
+
+#STRETCHGOAL: This tag can be used to mark ideas for improvement, for outsiders, and for possible aggregation
+
+#STRETCHGOAL: Yes, we have stretch goals for the generic. We could add a command in VSCode to add a blank template for different kinds of tasks we'd run
+
+#HOWTORUN: This tag should have the command that can be used to run the playbook, from within this folder. The idea 
+#is that we will then be able to use this tag to mark how to run this playbook, so that a wrapper can call it in a controlled way.
+
+#SETUPCOMMAND: A single command needed to set up a playbook
+
+#SETUPINSTRUCTIONS: A more in depth, guided tour through setting up for a playbook
+
+#This is a generic template that should run most of these playbooks
+#HOWTORUN_TEMPLATE: ansible-playbook <MODULE_NAME>.yaml
+---
+- name: DESCRIPTIVE_NAME
+  #We'll set this to localhost, since this is meant to be run to set up a linux desktop/development environment. We won't gather facts,
+  #since we're prioritizing speed and convenience over strict correctness, in both development and usage. 
+  hosts: localhost
+  gather_facts: no
+
+  tasks:
+      #This is a template that can be used for running a shell script. 
+    - name: SHELL_EXAMPLE
+      shell: |
+        #Put shell script here

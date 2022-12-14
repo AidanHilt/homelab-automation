@@ -1,0 +1,24 @@
+#Run this playbook to install poetry. It's expected that you install Ansible yourself, for now, it's not really worth automating that install. 
+#We're also not going to worry about idempotency for now, it's really worth it, 
+#STRETCHGOAL: Automate Ansible installation
+#STRETCHGOAL: Ensure Poetry is idempotent
+
+#HOWTORUN: ansible-playbook poetryInstaller.yaml
+---
+- name: Poetry installation manager
+  hosts: localhost
+  gather_facts: no
+
+  tasks:
+    - name: Run poetry installation script
+      shell: |
+        curl -sSL https://install.python-poetry.org | python3 -
+
+    - name: Confirm poetry's install visually
+      shell: |
+        poetry --version
+      register: versionOutput
+
+    - name: Output poetry version
+      debug: 
+        var: versionOutput.stdout

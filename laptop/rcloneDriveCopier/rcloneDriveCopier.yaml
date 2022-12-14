@@ -1,0 +1,21 @@
+#This sets up a special cronjob that syncs specific items to Google Drive. For now, it's only set up to work on Debian-based distros. 
+
+#STRETCHGOAL: Create a wrapper script to run this with a single command
+#STRETCHGOAL: Create a script that can run this and other setup commands
+#STRETCHGOAL: When creating the wrapper scripts, make sure that we stop hardcoding the location of the Ansible Vault password file
+
+#HOWTORUN: ansible-playbook rcloneDriveCopier.yaml -i ../laptopHost.yaml --vault-password-file /home/aidan/vaultPass.txt
+
+#SETUPINSTRUCTIONS: |
+#run `sudo apt install openssh-server sshpass &&  sudo systemctl enable ssh --now && ssh localhost #To add localhost to the recognized machines. It's hacky, I know`
+---
+- name: 
+  #We'll set this to localhost, since this is meant to be run to set up a linux desktop/development environment. We won't gather facts,
+  #since we're prioritizing speed and convenience over strict correctness, in both development and usage. 
+  hosts: localhost
+
+  tasks:
+    - name: Install the incron package using apt
+      apt: 
+        name: incron
+        state: present

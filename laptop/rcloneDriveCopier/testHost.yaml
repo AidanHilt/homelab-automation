@@ -1,0 +1,6 @@
+all:
+  hosts:
+    localhost:
+      ansible_user: aidan
+      ansible_password: d7c0b7d88bc07ceaa7fd2ac0d535f03c
+      ansible_become: yes

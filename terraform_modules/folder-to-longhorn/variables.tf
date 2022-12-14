@@ -10,7 +10,7 @@ variable volume_size {
   description = "The size to request for the pvc"
 }
 
-variable path{
+variable path {
   type        = string
   default     = ""
   description = "The path of the folder to be converted into a Longhorn volume"
